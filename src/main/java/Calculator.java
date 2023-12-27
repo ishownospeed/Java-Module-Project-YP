@@ -6,25 +6,59 @@ public class Calculator {
     private final Scanner scanner = new Scanner(System.in);
     private final Map<String, Double> goods = new HashMap<>();
 
+    private String addGood() {
+        String good;
+        while (true) {
+            System.out.println("Введите название товара");
+            if (scanner.hasNextLine()) {
+                good = scanner.nextLine();
+                break;
+            } else {
+                scanner.nextLine();
+                System.out.println("\nУкажите правильное название товара, только текст");
+            }
+        }
+        return good;
+    }
+
+    private void addPrice(String good) {
+        double priceGood;
+        while (true) {
+            System.out.println("Введите стоимость товара в формате \"рубли,копейки\"");
+            if (scanner.hasNextDouble()) {
+                priceGood = scanner.nextDouble();
+                goods.put(good, priceGood);
+                System.out.println("Товар: '" + good + '\'' + " успешно добавлен\n");
+                scanner.nextLine();
+                break;
+            } else {
+                scanner.nextLine();
+                System.out.println("\nУкажите правильную цену товара");
+            }
+        }
+    }
+
     private void addGoods() {
-        System.out.println("Введите название товара");
-        String good = scanner.next();
-        System.out.println("Введите стоимость товара в формате \"рубли,копейки\"");
-        double priceGood = scanner.nextDouble();
-        goods.put(good, priceGood);
-        System.out.println("Товар: '" + good + '\'' +" успешно добавлен\n");
+        addPrice(addGood());
     }
 
     public void printResult(int countMembers) {
         addGoods();
-        while(true) {
-            System.out.println("Хотите ли добавить ещё один товар?");
-            String userResponse = scanner.next();
-            if (isControlAnswer(userResponse)) {
-                countingTotals(countMembers);
-                break;
+        while (true) {
+            System.out.println("Если хотите добавить ещё один товар, то просто нажмите \"enter\" или введите любую букву" +
+                    "\nЕсли желаете прекратить добавление товаров введите \"Завершить\"");
+            if (scanner.hasNextLine()) {
+                String userResponse = scanner.nextLine();
+                if (isControlAnswer(userResponse)) {
+                    countingTotals(countMembers);
+                    break;
+                }
+                addGoods();
+            } else {
+                scanner.nextLine();
+                System.out.println("Введены некорректно данные\nпопробуйте еще раз");
             }
-            addGoods();
+
         }
     }
 
@@ -37,7 +71,7 @@ public class Calculator {
         printGoods();
         System.out.printf("Сумма: %.2f %s, которую должен заплатить каждый человек из %d гостей",
                 (sumGoods() / countMembers), rubleOutput(sumGoods() / countMembers), countMembers
-                );
+        );
     }
 
     private String rubleOutput(double sum) {
